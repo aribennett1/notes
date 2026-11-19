@@ -15,8 +15,12 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": [
-              "node_modules/argon2-browser/dist/argon2-bundled.min.js"
+            "assets": [
+              {
+                "input": "node_modules/argon2-browser/dist",
+                "glob": "argon2-bundled.min.js",
+                "output": "assets"
+              }
             ],
             "outputPath": "dist/private-notes"
           }

@@ -1,0 +1,7 @@
+import { Injectable, signal } from '@angular/core'; import { GOOGLE_OAUTH_CLIENT_ID } from './app-config';
+declare global { interface Window { google?: any } }
+@Injectable({providedIn:'root'}) export class AuthService { state=signal<'signed-out'|'authorizing'|'signed-in'|'expired'|'error'>('signed-out'); private token?:string; private expiresAt=0;
+ async signIn():Promise<string>{if(!GOOGLE_OAUTH_CLIENT_ID){this.state.set('error');throw Error('OAuth client ID is not configured')}await this.loadScript();this.state.set('authorizing');return new Promise((resolve,reject)=>{const client=window.google.accounts.oauth2.initTokenClient({client_id:GOOGLE_OAUTH_CLIENT_ID,scope:'https://www.googleapis.com/auth/devstorage.read_write',callback:(r:any)=>{if(r.error){this.state.set('error');reject(Error(r.error));return}this.token=r.access_token;this.expiresAt=Date.now()+Number(r.expires_in||3600)*1000;this.state.set('signed-in');resolve(this.token!)}});client.requestAccessToken({prompt:'consent'})})}
+ async accessToken(){if(this.token&&Date.now()<this.expiresAt-30000)return this.token;this.state.set('expired');return this.signIn()} clear(){this.token=undefined;this.expiresAt=0;this.state.set('signed-out')}
+ private loadScript(){return new Promise<void>((resolve,reject)=>{if(window.google?.accounts)return resolve();const s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';s.async=true;s.onload=()=>resolve();s.onerror=()=>reject(Error('Unable to load Google sign-in'));document.head.append(s)})}
+}
