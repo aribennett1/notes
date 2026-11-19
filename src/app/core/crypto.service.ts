@@ -1,0 +1,13 @@
+import { Injectable } from '@angular/core';
+// Loaded as a classic browser script via angular.json. Importing its UMD
+// bundle as an ES module breaks its browser-global detection at startup.
+declare const argon2: { ArgonType:{Argon2id:number}; hash(options:unknown):Promise<{hash:Uint8Array}> };
+export interface Client {id:number;name:string;createdAt:string;updatedAt:string;content:string}
+export interface Workspace {schemaVersion:1;nextClientId:number;clients:Client[]}
+export interface Envelope {version:1;algorithm:'AES-256-GCM';kdf:{algorithm:'Argon2id';salt:string;memoryKiB:number;iterations:number;parallelism:number};wrappedKey:string;wrapNonce:string;payload:string;payloadNonce:string}
+const b64=(x:BufferSource)=>btoa(String.fromCharCode(...new Uint8Array(x as ArrayBuffer))); const bytes=(x:string)=>Uint8Array.from(atob(x),c=>c.charCodeAt(0));
+@Injectable({providedIn:'root'}) export class CryptoService {
+ async encrypt(workspace:Workspace,password:string):Promise<Envelope>{const salt=crypto.getRandomValues(new Uint8Array(16)),raw=crypto.getRandomValues(new Uint8Array(32)),nonce=crypto.getRandomValues(new Uint8Array(12)),payloadNonce=crypto.getRandomValues(new Uint8Array(12));const kek=await this.kdf(password,salt);const key=await crypto.subtle.importKey('raw',raw,'AES-GCM',false,['encrypt']);const wrapped=await crypto.subtle.encrypt({name:'AES-GCM',iv:nonce},kek,raw);const payload=await crypto.subtle.encrypt({name:'AES-GCM',iv:payloadNonce},key,new TextEncoder().encode(JSON.stringify(workspace)));return {version:1,algorithm:'AES-256-GCM',kdf:{algorithm:'Argon2id',salt:b64(salt),memoryKiB:65536,iterations:3,parallelism:1},wrappedKey:b64(wrapped),wrapNonce:b64(nonce),payload:b64(payload),payloadNonce:b64(payloadNonce)}}
+ async decrypt(e:Envelope,password:string):Promise<Workspace>{if(e.version!==1||e.algorithm!=='AES-256-GCM')throw Error('Unsupported encryption version');const kek=await this.kdf(password,bytes(e.kdf.salt));const raw=await crypto.subtle.decrypt({name:'AES-GCM',iv:bytes(e.wrapNonce)},kek,bytes(e.wrappedKey));const key=await crypto.subtle.importKey('raw',raw,'AES-GCM',false,['decrypt']);return JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:bytes(e.payloadNonce)},key,bytes(e.payload))))}
+ private async kdf(password:string,salt:Uint8Array){const r=await argon2.hash({pass:password,salt,type:argon2.ArgonType.Argon2id,hashLen:32,mem:65536,time:3,parallelism:1});return crypto.subtle.importKey('raw',r.hash,'AES-GCM',false,['encrypt','decrypt'])}
+}

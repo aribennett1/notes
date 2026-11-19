@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "projects": {
+    "private-notes": {
+      "projectType": "application",
+      "root": "",
+      "sourceRoot": "src",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:application",
+          "options": {
+            "browser": "src/main.ts",
+            "index": "src/index.html",
+            "tsConfig": "tsconfig.app.json",
+            "styles": [
+              "src/styles.scss"
+            ],
+            "scripts": [
+              "node_modules/argon2-browser/dist/argon2-bundled.min.js"
+            ],
+            "outputPath": "dist/private-notes"
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "buildTarget": "private-notes:build"
+          }
+        }
+      }
+    }
+  },
+  "cli": {
+    "analytics": false
+  }
+}

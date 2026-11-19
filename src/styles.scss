@@ -1,0 +1,319 @@
+:root {
+    font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+    color: #202124;
+    background: #fff;
+    font-size: 16px
+}
+
+* {
+    box-sizing: border-box
+}
+
+button,
+input,
+textarea {
+    font: inherit
+}
+
+button {
+    border: 0;
+    border-radius: 8px;
+    padding: .6rem .8rem;
+    background: transparent;
+    color: #3c4043;
+    cursor: pointer
+}
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+    outline: 3px solid #8ab4f8;
+    outline-offset: 2px
+}
+
+main {
+    height: 100vh;
+    display: flex
+}
+
+aside {
+    width: 300px;
+    flex: none;
+    overflow: hidden;
+    background: #f8f9fa;
+    border-right: 1px solid #dadce0;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    transition: width .2s, padding .2s
+}
+
+aside.closed {
+    width: 58px;
+    padding: 16px 8px
+}
+
+aside.closed>*:not(.aside-head) {
+    display: none
+}
+
+aside.closed .aside-head b {
+    display: none
+}
+
+.aside-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    font-size: 1.05rem;
+    white-space: nowrap
+}
+
+.aside-head button {
+    font-size: 1.25rem;
+    padding: .5rem;
+    margin: 0 0 0 auto
+}
+
+.sidebar-toggle svg, .new svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.5;
+    stroke-linecap: round
+}
+
+.new { display: flex; align-items: center; gap: 8px }
+
+aside input {
+    width: 100%;
+    border: 1px solid #dadce0;
+    border-radius: 8px;
+    padding: 10px 12px;
+    background: #fff
+}
+
+.new {
+    margin: 12px 0;
+    background: #1a73e8;
+    color: #fff;
+    text-align: left
+}
+
+nav {
+    overflow: auto;
+    flex: 1
+}
+
+.client-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 54px;
+    padding: 6px 4px 6px 8px;
+    border-radius: 8px;
+    cursor: pointer
+}
+
+.client-row:hover { background: #eef3fb }
+.client-row.selected { background: #d2e3fc; color: #174ea6 }
+.client-copy { min-width: 0; flex: 1 }
+.client-copy strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
+.client-copy span { display: block; color: #5f6368; font-size: .78rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 3px }
+.client-row input { min-width: 0; flex: 1; padding: 7px; border: 1px solid #1a73e8; border-radius: 5px }
+.row-actions { display: flex; opacity: .45 }
+.client-row:hover .row-actions, .client-row.selected .row-actions { opacity: 1 }
+.row-actions button { padding: 6px; font-size: 1rem; line-height: 1 }
+
+nav button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    margin: 2px 0
+}
+
+nav button.selected {
+    background: #d2e3fc;
+    color: #174ea6
+}
+
+nav span {
+    display: block;
+    color: #5f6368;
+    font-size: .78rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 3px
+}
+
+.empty {
+    color: #5f6368;
+    padding: 1rem .5rem
+}
+
+footer {
+    border-top: 1px solid #dadce0;
+    padding-top: 8px;
+    display: flex;
+    justify-content: space-between
+}
+
+.editor {
+    min-width: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column
+}
+
+.editor header {
+    min-height: 96px;
+    padding: 18px 42px;
+    border-bottom: 1px solid #e8eaed;
+    display: flex;
+    gap: 8px;
+    align-items: center
+}
+
+.editor header>div {
+    margin-right: auto
+}
+
+.editor h1 {
+    font-size: 1.5rem;
+    margin: 0 0 4px;
+    font-weight: 500
+}
+
+.status {
+    font-size: .82rem;
+    color: #5f6368
+}
+
+.danger {
+    color: #b3261e
+}
+
+.editor textarea {
+    border: 0;
+    resize: none;
+    flex: 1;
+    padding: 30px 42px;
+    line-height: 1.65;
+    font-family: ui-monospace, SFMono-Regular, monospace;
+    font-size: 1rem
+}
+
+.welcome {
+    margin: auto;
+    text-align: center;
+    color: #5f6368
+}
+
+.mobile-menu {
+    display: none
+}
+
+.unlock {
+    width: min(420px, calc(100vw - 32px));
+    margin: auto;
+    display: grid;
+    gap: 16px
+}
+
+.unlock .brand {
+    color: #1a73e8;
+    font-weight: 700
+}
+
+.unlock h1 {
+    margin: 0
+}
+
+.unlock p {
+    line-height: 1.5;
+    color: #5f6368
+}
+
+.unlock input {
+    padding: 12px;
+    border: 1px solid #dadce0;
+    border-radius: 8px
+}
+
+.unlock button {
+    background: #1a73e8;
+    color: white
+}
+
+.unlock small {
+    color: #b3261e;
+    min-height: 1em
+}
+
+.dialog-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    background: rgb(0 0 0 / .32)
+}
+
+.client-form {
+    width: min(100%, 380px);
+    padding: 24px;
+    border: 1px solid #dadce0;
+    border-radius: 12px;
+    background: white;
+    box-shadow: 0 12px 30px rgb(0 0 0 / .18)
+}
+
+.client-form h2 { margin: 0 0 20px; font-size: 1.25rem }
+.client-form label { display: grid; gap: 7px; margin: 0 0 16px; font-weight: 600 }
+.client-form input { width: 100%; padding: 10px 12px; border: 1px solid #9aa0a6; border-radius: 6px }
+.form-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 22px }
+.form-actions .primary { background: #1a73e8; color: white }
+
+.confirm-dialog {
+    width: min(100%, 390px);
+    padding: 24px;
+    border-radius: 12px;
+    background: white;
+    box-shadow: 0 12px 30px rgb(0 0 0 / .18)
+}
+
+.confirm-dialog h2 { margin: 0 0 10px; font-size: 1.25rem }
+.confirm-dialog p { margin: 0; line-height: 1.5; color: #3c4043 }
+.delete-confirm { background: #b3261e; color: white }
+
+@media(max-width:680px) {
+    aside {
+        position: absolute;
+        z-index: 2;
+        height: 100%;
+        box-shadow: 4px 0 16px #0002
+    }
+
+    .editor header {
+        padding: 14px
+    }
+
+    .editor textarea {
+        padding: 20px
+    }
+
+    .mobile-menu {
+        display: block
+    }
+
+    aside.closed {
+        display: flex;
+        width: 58px;
+        padding: 16px 8px;
+        box-shadow: none
+    }
+}

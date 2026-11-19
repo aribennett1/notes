@@ -1,0 +1,9 @@
+import { Injectable, signal } from '@angular/core'; import { CryptoService, Workspace } from './crypto.service'; import { LocalStorageService } from './local-storage.service';
+@Injectable({providedIn:'root'}) export class SyncService {
+ status=signal('Saved locally'); private timer?:number; private revision=0; private generation?:string; private syncing=false;
+ constructor(private crypto:CryptoService,private local:LocalStorageService){}
+ queue(w:Workspace,password:string){const rev=++this.revision; clearTimeout(this.timer);this.status.set('Saving locally…');this.timer=window.setTimeout(()=>this.persist(w,password,rev),1200)}
+ private async persist(w:Workspace,password:string,revision:number){try {const envelope=await this.crypto.encrypt(w,password);if(revision!==this.revision)return;await this.local.save(envelope);if(revision!==this.revision)return;this.status.set(navigator.onLine?'Saved locally':'Offline — changes saved locally');if(navigator.onLine) void this.upload(envelope,revision)}catch{this.status.set('Save failed')}}
+ private async upload(envelope:unknown,revision:number){if(this.syncing)return;const api=(globalThis as any).__PRIVATE_NOTES_API_URL__ as string|undefined;if(!api)return;this.syncing=true;try {this.status.set('Syncing…');const token=await this.idToken();if(!token)throw Error('not authenticated');const res=await fetch(`${api}/api/workspace`,{method:'PUT',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({envelope,expectedGeneration:this.generation})});if(res.status===412){this.status.set('Conflict detected');return}if(!res.ok)throw Error('sync');this.generation=(await res.json()).generation;if(revision===this.revision)this.status.set('All changes synced')}catch{if(revision===this.revision)this.status.set('Sync failed')}finally{this.syncing=false}}
+ private async idToken():Promise<string|undefined>{return (globalThis as any).__PRIVATE_NOTES_ID_TOKEN__?.()}
+}
