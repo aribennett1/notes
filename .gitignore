@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+
+# Angular build and local tooling output
+dist/
+.angular/
+out-tsc/
+
+# Environment and editor files
+.env
+.env.*
+!.env.example
+.DS_Store
+.idea/
+.vscode/
+
+# Logs
+*.log
+npm-debug.log*
