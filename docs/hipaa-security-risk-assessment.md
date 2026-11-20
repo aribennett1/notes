@@ -191,17 +191,17 @@ This is an inherent consequence of the current design, not a malfunction.
 
 **Threat:** Unauthorized activity or system misuse occurs without sufficient records to detect or investigate it.
 
-**Existing safeguards:** Authenticated API requests; potential Google Cloud operational and audit logging.
+**Existing safeguards:** Firebase ID-token verification and single-user UID authorization for protected API operations; Cloud Run request logging verified in Google Cloud Logs Explorer on November 20, 2026.
 
 **Likelihood:** Not established  
 **Impact:** Medium to High  
-**Residual risk:** Undetermined
+**Residual risk:** Medium, preliminary; subject to review of retention and operational practice
 
 **Assessment:** The application does not maintain patient-level clinical change histories. Such histories are not automatically required by the HIPAA Security Rule. However, the rule requires mechanisms to record and examine relevant information-system activity.
 
-The deployed logging configuration has not yet been established by this assessment.
+On November 20, 2026, hundreds of Cloud Run request entries, including successful `PUT /notes` requests, were observed in Logs Explorer. They include timestamps, HTTP methods, request URLs, response status codes, durations, and available metadata such as user agents. These records provide evidence for investigation and reduce the risk that API activity is entirely unrecorded. They operate at the request level without recording plaintext clinical information; they do not identify individual patient changes or conclusively identify the person making a request. The backend cannot access individual patient records or note contents.
 
-**Disposition:** Verify existing Cloud Run and Cloud Storage logging, and determine whether the available records and review procedures adequately satisfy the audit-controls requirement.
+**Disposition:** If suspicious activity or unauthorized access is suspected, the operator will review Cloud Run logs in Logs Explorer, compare timestamps, user agents, IP addresses where available, and request patterns against expected use, investigate suspicious activity, and take appropriate account or system security measures. Assess log retention settings, the operation of the review procedure in practice, and whether available controls meet applicable requirements; these have not been independently confirmed.
 
 No plaintext patient names or clinical notes need to be introduced into application logs for this purpose.
 
@@ -231,14 +231,14 @@ No plaintext patient names or clinical notes need to be introduced into applicat
 | Synchronization conflicts | Low–Medium | Maintain existing controls |
 | Service interruption | Low–Medium | Maintain paper fallback |
 | Compromised frontend | Undetermined | Verify deployment protections |
-| Inadequate audit controls | Undetermined | Verify logging and review procedures |
+| Inadequate audit controls | Medium, preliminary | Assess retention, operational review, and control adequacy |
 | User-related disclosure | Medium | Apply operational safeguards |
 
 The architecture provides meaningful protections against unauthorized access to cloud-stored clinical information.
 
 The most significant remaining availability risk is permanent loss of the encryption password.
 
-The most significant outstanding verification items concern frontend deployment security, audit controls, and practical recovery testing.
+The most significant outstanding verification items concern frontend deployment security, audit-log retention and operational review, and practical recovery testing.
 
 ## 6. Backup and Contingency Evaluation
 

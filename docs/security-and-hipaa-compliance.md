@@ -65,7 +65,11 @@ During an outage or device failure, the clinical user may use temporary paper do
 
 ## 8. Audit controls and logging
 
-The API requires authentication and authorization. The application code does not intentionally log plaintext patient names or note contents. Google Cloud may retain operational or audit records according to deployed logging settings; the actual configuration and its adequacy for applicable audit-control requirements have not been confirmed. The application does not implement a separate patient-level clinical change history.
+On November 20, 2026, Cloud Run request logging for `notes-api` was verified in Google Cloud Logs Explorer. Hundreds of log entries were observed, including successful `PUT /notes` requests. Logs include timestamps, HTTP methods, request URLs, response status codes, request durations, and available request metadata such as user agents. Protected API operations require Firebase ID-token verification and authorization against the configured single-user UID.
+
+Audit logging operates at the API request level without recording plaintext clinical information. Notes are encrypted client-side, and the backend does not have access to individual patient records or note contents. Request logs do not identify individual patient changes or conclusively establish the identity of the person making a request.
+
+If unauthorized access or suspicious activity is suspected, the operator will examine Cloud Run request logs in Logs Explorer, comparing timestamps, user agents, IP addresses where available, and request patterns with expected use. The operator will investigate suspicious activity and take appropriate account or system security measures. Log retention settings, the operation of this review procedure in practice, and the adequacy of the controls for applicable requirements have not been independently confirmed.
 
 ## 9. Device and operational security
 
