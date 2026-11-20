@@ -1,2 +1,3 @@
 import { Injectable } from '@angular/core'; import { openDB } from 'idb'; import { Envelope } from './crypto.service';
-@Injectable({providedIn:'root'}) export class LocalStorageService { private db=openDB('private-notes-v2',1,{upgrade(db){db.createObjectStore('workspace')}}); async get(){return (await this.db).get('workspace','current') as Promise<Envelope|undefined>} async save(e:Envelope){await (await this.db).put('workspace',e,'current')} }
+export interface WorkspaceRecord { envelope:Envelope; generation:string|null; dirty:boolean; remote?:{envelope:Envelope;generation:string} }
+@Injectable({providedIn:'root'}) export class LocalStorageService { private db=openDB('private-notes-v3',1,{upgrade(db){db.createObjectStore('workspace')}}); async get():Promise<WorkspaceRecord|undefined>{return (await this.db).get('workspace','current')} async save(record:WorkspaceRecord){await (await this.db).put('workspace',record,'current')} }

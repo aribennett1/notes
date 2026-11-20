@@ -1,0 +1,18 @@
+import 'zone.js';
+import '@angular/compiler';
+import { test } from 'node:test';
+import { strict as assert } from 'node:assert';
+import { SyncService } from '../src/app/core/sync.service';
+import { CloudError } from '../src/app/core/cloud-storage.service';
+
+Object.defineProperty(globalThis,'navigator',{value:{onLine:true},configurable:true});
+const envelope=(value:string)=>({value} as any);
+const workspace=(value:string)=>({value} as any);
+function setup(initial?:any,remote?:any){let record=initial;let cloud=remote;let generation=remote?.generation??null;let count=Number(generation)||0;const calls:any[]=[];const local={get:async()=>record,save:async(r:any)=>{record=structuredClone(r)}};const storage={read:async()=>cloud,write:async(e:any,g?:string)=>{calls.push(g??'0');if((g??null)!==generation)throw new CloudError(412,'conflict');generation=String(++count);cloud={envelope:e,generation};return generation}};const crypto={encrypt:async(w:any)=>envelope(w.value)};const sync=new SyncService(crypto as any,local as any,storage as any);return {sync,local,storage,calls,get record(){return record},get cloud(){return cloud},changeCloud(){generation=String(++count);cloud={envelope:envelope('other'),generation}}};}
+const settle=()=>new Promise(resolve=>setTimeout(resolve,1050));
+test('initial creation uses does-not-exist precondition and stores generation',async()=>{const s=setup();assert.equal(await s.sync.initialize(),undefined);await s.sync.create(workspace('new'),'pw');await s.sync.retry();assert.deepEqual(s.calls,['0']);assert.equal(s.record.generation,'1');assert.equal(s.record.dirty,false)});
+test('reload accepts cloud without writing when local is clean',async()=>{const s=setup({envelope:envelope('old'),generation:'1',dirty:false},{envelope:envelope('new'),generation:'2'});assert.deepEqual(await s.sync.initialize(),envelope('new'));assert.equal(s.record.generation,'2');assert.deepEqual(s.calls,[])});
+test('editing uploads with baseline generation',async()=>{const s=setup({envelope:envelope('old'),generation:'1',dirty:false},{envelope:envelope('old'),generation:'1'});await s.sync.initialize();s.sync.queue(workspace('edit'),'pw');await settle();assert.deepEqual(s.calls,['1']);assert.equal(s.record.dirty,false);assert.equal(s.record.envelope.value,'edit')});
+test('offline edit persists and uploads on retry',async()=>{const s=setup({envelope:envelope('old'),generation:'1',dirty:false},{envelope:envelope('old'),generation:'1'});await s.sync.initialize();(navigator as any).onLine=false;s.sync.queue(workspace('offline'),'pw');await settle();assert.equal(s.record.dirty,true);assert.deepEqual(s.calls,[]);(navigator as any).onLine=true;await s.sync.retry();assert.equal(s.record.dirty,false);assert.deepEqual(s.calls,['1'])});
+test('concurrent cloud edit preserves both copies',async()=>{const s=setup({envelope:envelope('local'),generation:'1',dirty:true},{envelope:envelope('remote'),generation:'2'});assert.deepEqual(await s.sync.initialize(),envelope('local'));assert.equal(s.record.remote.envelope.value,'remote');await s.sync.retry();assert.deepEqual(s.calls,[]);assert.match(s.sync.status(),/Conflict/)});
+test('cloud edit after initialization produces a precondition conflict',async()=>{const s=setup({envelope:envelope('old'),generation:'1',dirty:false},{envelope:envelope('old'),generation:'1'});await s.sync.initialize();s.changeCloud();s.sync.queue(workspace('local'),'pw');await settle();assert.deepEqual(s.calls,['1']);assert.equal(s.record.dirty,true);assert.equal(s.record.remote.envelope.value,'other');assert.match(s.sync.status(),/Conflict/)});
