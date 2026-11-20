@@ -26,7 +26,7 @@ A Google Cloud Business Associate Agreement (BAA) has been accepted. The operato
 
 The intended deployment has one authorized clinical user. Firebase Authentication establishes the Google identity; the API verifies Firebase ID tokens and checks the token UID against one configured authorized UID. Missing or invalid tokens and other identities are rejected. The API uses its Cloud Run service identity to access the bucket.
 
-The encryption password is separate from Google sign-in. A restored authentication session does not itself decrypt the workspace. Sharing and multi-user clinical access are not supported. Protect the Google account and administrative accounts with appropriate access controls and multifactor authentication.
+The encryption password is separate from Google sign-in. Google OAuth credentials authenticate the user but cannot decrypt the notes or recover the encryption password. A restored authentication session does not itself decrypt the workspace. Sharing and multi-user clinical access are not supported. Protect the Google account and administrative accounts with appropriate access controls and multifactor authentication.
 
 ## 4. Encryption and data protection
 
@@ -44,7 +44,7 @@ The API uses Cloud Storage generation preconditions for writes. A mismatched gen
 | Concurrent overwrite | Generation-based conditional writes and conflict detection |
 | Accidental cloud-object deletion | Seven-day Cloud Storage soft deletion |
 | Device loss or failure | Encrypted cloud copy can support restoration on another suitable device |
-| Forgotten encryption password | A separate recovery secret is securely retained for recovering access |
+| Permanently lost encryption password and no usable password or key copy | Encrypted notes cannot be recovered; protect access to the encryption password |
 | Internet or service interruption | Encrypted local cache where available; secure paper documentation as a contingency |
 | Unauthorized physical access | Device security, session locking, and physical safeguards |
 | Compromised frontend or browser | Protect GitHub and deployment access, review dependencies, and use trusted devices; assess hosting risks |
@@ -53,9 +53,11 @@ This table is not a complete HIPAA Security Rule risk analysis. Review risks and
 
 ## 6. Backup and recovery
 
-The encrypted workspace is stored in Cloud Storage, and an encrypted cache may also be retained in IndexedDB. The bucket has seven-day soft deletion enabled. A separate recovery secret is securely retained for recovering access to encrypted notes; do not record it in this public repository. The application does not implement a separate password-reset or recovery-key feature.
+The encrypted workspace is stored in Cloud Storage, and an encrypted cache may also be retained in IndexedDB. The bucket has seven-day soft deletion enabled. The application does not provide a separate recovery key or password-recovery mechanism.
 
-To recover after device failure, use a suitable device, authenticate as the authorized user, retrieve an intact encrypted workspace, and supply the appropriate decryption credentials. For an accidentally deleted cloud object, an authorized administrator can use the bucket's applicable soft-delete recovery procedure. Verify the restored object and decrypt it in the browser. Recovery is dependent on an intact copy and valid credentials. Periodic restoration testing is required; completion of such testing has not been confirmed here. See [Cloud Storage soft delete](https://cloud.google.com/storage/docs/soft-delete).
+To recover after device failure, use a suitable device, authenticate as the authorized user, retrieve an intact encrypted workspace, and supply the encryption password. For an accidentally deleted cloud object, an authorized administrator can use the bucket's applicable soft-delete recovery procedure. Verify the restored object and decrypt it in the browser.
+
+Cloud backups and soft deletion restore encrypted data; they cannot decrypt it or recover a lost password. If the encryption password is permanently lost and no usable copy of the password or encryption key remains, the encrypted notes cannot be recovered. This is a known data-availability consequence of client-side encryption, not an application malfunction. Periodic restoration testing is required; completion of such testing has not been confirmed here. See [Cloud Storage soft delete](https://cloud.google.com/storage/docs/soft-delete).
 
 ## 7. Emergency and contingency procedures
 
