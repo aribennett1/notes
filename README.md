@@ -19,3 +19,5 @@ Cloud Run must be publicly invokable for browsers; Firebase ID token verificatio
 ## Security & HIPAA Compliance
 
 See [Security & HIPAA Compliance Documentation](docs/security-and-hipaa-compliance.md) for the application's security architecture, safeguards, and operational procedures.
+
+See also the [HIPAA Security Risk Assessment](docs/hipaa-security-risk-assessment.md) for identified risks and recommended actions.

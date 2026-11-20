@@ -49,7 +49,7 @@ The API uses Cloud Storage generation preconditions for writes. A mismatched gen
 | Unauthorized physical access | Device security, session locking, and physical safeguards |
 | Compromised frontend or browser | Protect GitHub and deployment access, review dependencies, and use trusted devices; assess hosting risks |
 
-This table is not a complete HIPAA Security Rule risk analysis. Review risks and safeguards when the application, infrastructure, or intended use changes. The adequacy and operation of each control must be evaluated as part of the organization's risk management process.
+This table is not a complete HIPAA Security Rule risk analysis. The [application-specific risk assessment](hipaa-security-risk-assessment.md) records preliminary ratings and recommended actions; responsible-user review and risk acceptance remain pending. Review risks and safeguards when the application, infrastructure, or intended use changes. The adequacy and operation of each control must be evaluated as part of the organization's risk management process.
 
 ## 6. Backup and recovery
 
