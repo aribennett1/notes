@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Privacy Policy — Private Notes</title>
+  <style>
+    :root { font-family: Inter, ui-sans-serif, system-ui, sans-serif; color: #202124; background: #fff; line-height: 1.55; }
+    body { margin: 0; }
+    main { width: min(720px, calc(100% - 40px)); margin: 0 auto; padding: 64px 0; }
+    h1 { font-size: 2rem; margin: 0 0 8px; }
+    h2 { font-size: 1.2rem; margin: 32px 0 8px; }
+    p, li { font-size: 1rem; }
+    .updated { color: #5f6368; margin-top: 0; }
+    a { color: #1967d2; }
+    a:focus-visible { outline: 3px solid #8ab4f8; outline-offset: 3px; }
+  </style>
+</head>
+<body>
+  <main>
+    <a href="../">← Private Notes</a>
+    <h1>Privacy Policy</h1>
+    <p class="updated">Last updated: November 19, 2026</p>
+
+    <h2>How Private Notes works</h2>
+    <p>Private Notes uses Google OAuth to obtain an access token for the signed-in user. That token is used only to authorize requests to a private Google Cloud Storage bucket associated with this application.</p>
+
+    <h2>Your notes and encryption</h2>
+    <p>Note contents are encrypted in your browser before they are uploaded. The application uses a master password only in the browser to derive encryption material and encrypt or decrypt the workspace. Plaintext notes and the master password are not transmitted to Google Cloud Storage.</p>
+    <p>The storage service receives an encrypted workspace file and encryption metadata required to decrypt it locally. It does not receive readable note content or your encryption password.</p>
+
+    <h2>Storage and authentication</h2>
+    <p>Encrypted notes are stored in Google Cloud Storage. Google OAuth authentication information is used to authorize storage requests; Google Cloud IAM controls whether the signed-in account may access the bucket. The application does not use a custom backend or third-party analytics.</p>
+    <p>An encrypted local cache of the workspace may be retained in your browser using IndexedDB so previously unlocked work can be available offline. Access tokens are kept only in memory and are not stored in browser storage or URLs.</p>
+
+    <h2>Your responsibilities</h2>
+    <p>Keep your master password secure. If it is lost, encrypted notes may be unrecoverable. Use a trusted device and lock the application when you finish. No web application can protect plaintext while it is open in a compromised browser or device.</p>
+  </main>
+</body>
+</html>

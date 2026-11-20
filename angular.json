@@ -17,6 +17,11 @@
             ],
             "assets": [
               {
+                "input": "public",
+                "glob": "**/*",
+                "output": "/"
+              },
+              {
                 "input": "node_modules/argon2-browser/dist",
                 "glob": "argon2-bundled.min.js",
                 "output": "assets"
