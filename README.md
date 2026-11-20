@@ -4,7 +4,7 @@ Angular encrypts notes in the browser and authenticates with Firebase Google Sig
 
 ## Deploy API
 
-First deploy the frontend with the GitHub Actions workflow, then sign in with the intended Google account. The sign-in screen temporarily displays the Firebase UID. Alternatively, find it in Firebase Console → Authentication → Users. The API refuses to start without `ALLOWED_UID`.
+Find the intended user's Firebase UID in Firebase Console → Authentication → Users. The API refuses to start without `ALLOWED_UID`.
 
 In Google Cloud Shell, clone this repository and run the following from its root. Replace the UID placeholder and confirm the `notes-api` service account has bucket object read/write access:
 
