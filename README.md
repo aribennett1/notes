@@ -16,8 +16,21 @@ Set `API_URL` in `src/app/core/app-config.ts` to the resulting HTTPS Cloud Run U
 
 Cloud Run must be publicly invokable for browsers; Firebase ID token verification and the UID allowlist protect the API. Only encrypted envelopes are sent to the API. This project is not a HIPAA compliance claim.
 
-## Security & HIPAA Compliance
+## Security & HIPAA
 
-See [Security & HIPAA Compliance Documentation](docs/security-and-hipaa-compliance.md) for the application's security architecture, safeguards, and operational procedures.
+Private Notes is designed for use with HIPAA-regulated clinical information and incorporates safeguards including:
 
-See also the [HIPAA Security Risk Assessment](docs/hipaa-security-risk-assessment.md) for identified risks and recommended actions.
+- Client-side AES-256-GCM encryption with Argon2id password-based key derivation.
+- Firebase authentication with single-user authorization.
+- Encrypted cloud storage under an accepted Google Cloud Business Associate Agreement (BAA).
+- Verified Cloud Run request logging and documented incident-review procedures.
+- Documented security risk assessment, backup, and contingency procedures.
+
+Clinical note contents are encrypted before leaving the browser. The backend cannot decrypt patient information.
+
+For details, see:
+
+- [Security & HIPAA Compliance Documentation](docs/security-and-hipaa-compliance.md)
+- [HIPAA Security Risk Assessment](docs/security-risk-assessment.md)
+
+HIPAA compliance also depends on the application's deployment, configuration, and operational practices. This documentation describes the implemented safeguards and does not constitute an independent certification.
