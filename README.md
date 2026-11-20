@@ -15,3 +15,7 @@ gcloud run deploy notes-api --source backend --project project-451073f3-822e-4c9
 Set `API_URL` in `src/app/core/app-config.ts` to the resulting HTTPS Cloud Run URL (without a trailing slash), commit and push that change. GitHub Actions builds and deploys the frontend to GitHub Pages. Locally, build using `npm ci && npm run build -- --base-href /notes/`.
 
 Cloud Run must be publicly invokable for browsers; Firebase ID token verification and the UID allowlist protect the API. Only encrypted envelopes are sent to the API. This project is not a HIPAA compliance claim.
+
+## Security & HIPAA Compliance
+
+See [Security & HIPAA Compliance Documentation](docs/security-and-hipaa-compliance.md) for the application's security architecture, safeguards, and operational procedures.
