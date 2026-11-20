@@ -1,11 +1,17 @@
-# Private Notes MVP
+# Private Notes
 
-Angular client that encrypts notes in the browser and stores only encrypted envelopes in Google Cloud Storage. The client uses Argon2id to derive a key-encryption key and AES-256-GCM with fresh random nonces for key wrapping and workspace encryption.
+Angular encrypts notes in the browser and authenticates with Firebase Google Sign-In. A Cloud Run API verifies a single authorized Firebase UID and stores the encrypted envelope in the private Cloud Storage bucket.
 
-## Run
+## Deploy API
 
-Install dependencies with `npm install`, then run `npm start`. Set `GOOGLE_OAUTH_CLIENT_ID` in `src/app/core/app-config.ts` to the public OAuth web-client ID. Configure an authorized JavaScript origin of `https://aribennett1.github.io` (plus localhost for development). Tokens remain only in memory.
+First deploy the frontend with the GitHub Actions workflow, then sign in with the intended Google account. The sign-in screen temporarily displays the Firebase UID. Alternatively, find it in Firebase Console → Authentication → Users. The API refuses to start without `ALLOWED_UID`.
 
-## Deployment notes
+In Google Cloud Shell, clone this repository and run the following from its root. Replace the UID placeholder and confirm the `notes-api` service account has bucket object read/write access:
 
-Enable uniform bucket-level access, public access prevention, versioning, and lifecycle rules on `bennett-notes-storage`. Grant the intended Google user Storage Object User access. Set bucket CORS for `https://aribennett1.github.io`, headers `Authorization, Content-Type`, and methods `GET, POST, PUT, HEAD`. Build for Pages with `npm run build -- --base-href /notes/`. GitHub Pages runs public JavaScript, so XSS or a compromised deployment can expose unlocked notes; this is not a HIPAA-compliance claim.
+```sh
+gcloud run deploy notes-api --source backend --project project-451073f3-822e-4c9a-a60 --region us-east1 --service-account notes-api@project-451073f3-822e-4c9a-a60.iam.gserviceaccount.com --allow-unauthenticated --set-env-vars ALLOWED_UID=REPLACE_WITH_FIREBASE_UID
+```
+
+Set `API_URL` in `src/app/core/app-config.ts` to the resulting HTTPS Cloud Run URL (without a trailing slash), commit and push that change. GitHub Actions builds and deploys the frontend to GitHub Pages. Locally, build using `npm ci && npm run build -- --base-href /notes/`.
+
+Cloud Run must be publicly invokable for browsers; Firebase ID token verification and the UID allowlist protect the API. Only encrypted envelopes are sent to the API. This project is not a HIPAA compliance claim.

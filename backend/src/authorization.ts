@@ -1,0 +1,2 @@
+import { RequestHandler } from 'express';
+export function authorize(verify:(token:string)=>Promise<{uid:string}>,allowedUid:string):RequestHandler {return async(req,res,next)=>{const match=/^Bearer (.+)$/.exec(req.header('authorization')||'');if(!match){res.sendStatus(401);return}try{const token=await verify(match[1]);if(token.uid!==allowedUid){res.sendStatus(403);return}next()}catch{res.sendStatus(401)}}}

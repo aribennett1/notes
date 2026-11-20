@@ -12,6 +12,7 @@
     "@angular/forms": "^19.0.0",
     "@angular/platform-browser": "^19.0.0",
     "argon2-browser": "^1.18.0",
+    "firebase": "^13.4.0",
     "idb": "^8.0.0",
     "jszip": "^3.10.2",
     "zone.js": "^0.15.0"
