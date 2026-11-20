@@ -253,6 +253,28 @@ footer {
     min-height: 1em
 }
 
+.import-shortcut {
+    position: fixed;
+    z-index: 3;
+    left: 155px;
+    bottom: 13px
+}
+
+.import-shortcut input { display: none }
+.bulk-import-input { display: none }
+footer { gap: 2px }
+footer button { padding: .6rem .35rem; white-space: nowrap }
+.import-shortcut button { padding: .6rem .45rem; white-space: nowrap }
+.locked .import-shortcut { display: none }
+.reconnect { position: fixed; right: 20px; bottom: 20px; background: #1a73e8; color: white; z-index: 3 }
+.welcome { display: none }
+.empty { font-size: 0 }
+.empty::after { content: 'No clients yet'; font-size: 1rem }
+
+@media(max-width:680px) {
+    .import-shortcut { left: 150px }
+}
+
 .dialog-backdrop {
     position: fixed;
     inset: 0;
