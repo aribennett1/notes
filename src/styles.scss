@@ -339,3 +339,13 @@ footer button { padding: .6rem .35rem; white-space: nowrap }
         box-shadow: none
     }
 }
+
+.client-copy .deleted-tag {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #fce8e6;
+  color: #a50e0e;
+  font-size: .7rem;
+  font-weight: 600;
+}

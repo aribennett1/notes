@@ -1,4 +1,4 @@
-import 'zone.js';
+import 'zone.js/node';
 import '@angular/compiler';
 import { test } from 'node:test';
 import { strict as assert } from 'node:assert';
@@ -17,3 +17,25 @@ test('offline edit persists and uploads on retry',async()=>{const s=setup({envel
 test('concurrent cloud edit preserves both copies',async()=>{const s=setup({envelope:envelope('local'),generation:'1',dirty:true},{envelope:envelope('remote'),generation:'2'});assert.deepEqual(await s.sync.initialize(),envelope('local'));assert.equal(s.record.remote.envelope.value,'remote');await s.sync.retry();assert.deepEqual(s.calls,[]);assert.match(s.sync.status(),/Conflict/)});
 test('cloud edit after initialization produces a precondition conflict',async()=>{const s=setup({envelope:envelope('old'),generation:'1',dirty:false},{envelope:envelope('old'),generation:'1'});await s.sync.initialize();s.changeCloud();s.sync.queue(workspace('local'),'pw');await settle();assert.deepEqual(s.calls,['1']);assert.equal(s.record.dirty,true);assert.equal(s.record.remote.envelope.value,'other');assert.match(s.sync.status(),/Conflict/)});
 test('reload reconciles an already uploaded identical encrypted envelope',async()=>{const s=setup({envelope:envelope('same'),generation:'1',dirty:true},{envelope:envelope('same'),generation:'2'});await s.sync.initialize();assert.equal(s.record.generation,'2');assert.equal(s.record.dirty,false);assert.deepEqual(s.calls,[]);assert.equal(s.sync.status(),'All changes synced')});
+
+test('local mode creates, edits, and reloads without contacting cloud storage',async()=>{
+ const s=setup();s.sync.localOnly=true;
+ s.storage.read=async()=>{throw Error('Local mode must not read cloud storage')};
+ s.storage.write=async()=>{throw Error('Local mode must not write cloud storage')};
+ assert.equal(await s.sync.initialize(),undefined);
+ await s.sync.create(workspace('new'),'pw');
+ assert.equal(s.record.envelope.value,'new');assert.equal(s.record.dirty,false);
+ s.sync.queue(workspace('edited'),'pw');await settle();await s.sync.retry();
+ assert.equal(s.record.envelope.value,'edited');assert.equal(s.record.dirty,false);
+ assert.equal(s.sync.status(),'Saved locally');
+ const reloaded=new SyncService({} as any,s.local as any,s.storage as any);reloaded.localOnly=true;
+ assert.deepEqual(await reloaded.initialize(),envelope('edited'));
+ assert.deepEqual(s.calls,[]);
+});
+
+test('local mode preserves existing cached notes even when marked pending cloud sync',async()=>{
+ const s=setup({envelope:envelope('cached'),generation:'4',dirty:true});s.sync.localOnly=true;
+ s.storage.read=async()=>{throw Error('Local mode must not read cloud storage')};
+ assert.deepEqual(await s.sync.initialize(),envelope('cached'));
+ await s.sync.retry();assert.deepEqual(s.calls,[]);assert.equal(s.record.generation,'4');
+});

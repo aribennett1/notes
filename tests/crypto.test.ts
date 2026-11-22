@@ -1,4 +1,4 @@
-import 'zone.js';
+import 'zone.js/node';
 import '@angular/compiler';
 import { test } from 'node:test';
 import { strict as assert } from 'node:assert';

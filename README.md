@@ -2,6 +2,10 @@
 
 Angular encrypts notes in the browser and authenticates with Firebase Google Sign-In. A Cloud Run API verifies a single authorized Firebase UID and stores the encrypted envelope in the private Cloud Storage bucket.
 
+## Run locally
+
+Run `npm start` and open `http://localhost:4200`. On localhost, `127.0.0.1`, or IPv6 loopback, Google sign-in and cloud sync are disabled. Create or unlock your workspace with a master password; notes remain encrypted in IndexedDB in that browser. Reloading restores the local workspace.
+
 ## Deploy API
 
 Find the intended user's Firebase UID in Firebase Console → Authentication → Users. The API refuses to start without `ALLOWED_UID`.

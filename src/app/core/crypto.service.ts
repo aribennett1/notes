@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 // Loaded as a classic browser script via angular.json. Importing its UMD
 // bundle as an ES module breaks its browser-global detection at startup.
 declare const argon2: { ArgonType:{Argon2id:number}; hash(options:unknown):Promise<{hash:Uint8Array}> };
-export interface Client {id:number;name:string;createdAt:string;updatedAt:string;content:string}
+export interface Client {id:number;name:string;createdAt:string;updatedAt:string;content:string;archived?:boolean}
 export interface Workspace {schemaVersion:1;nextClientId:number;clients:Client[]}
 export interface Envelope {version:1;algorithm:'AES-256-GCM';kdf:{algorithm:'Argon2id';salt:string;memoryKiB:number;iterations:number;parallelism:number};wrappedKey:string;wrapNonce:string;payload:string;payloadNonce:string}
 const b64=(x:ArrayBuffer)=>{const data=new Uint8Array(x);let binary='';for(let offset=0;offset<data.length;offset+=0x8000)binary+=String.fromCharCode(...data.subarray(offset,offset+0x8000));return btoa(binary)}; const bytes=(x:string)=>Uint8Array.from(atob(x),c=>c.charCodeAt(0));
